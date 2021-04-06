@@ -29,14 +29,28 @@ export default function Order() {
 
   return (
     <Grid container>
-      <Grid item xs={12}>
-        <OrderForm {...{ values, errors, handleInputChange }}></OrderForm>
+      <Grid item xs={12} spacing>
+        <OrderForm
+          {...{
+            values,
+            setValues,
+            errors,
+            setErrors,
+            handleInputChange,
+            resetFormControls,
+          }}
+        ></OrderForm>
       </Grid>
       <Grid item xs={6}>
-        <SearchFoodItems></SearchFoodItems>
+        <SearchFoodItems {...{ values, setValues }}></SearchFoodItems>
       </Grid>
       <Grid item xs={6}>
-        <OrderedFoodItems></OrderedFoodItems>
+        <OrderedFoodItems
+          {...{
+            values,
+            setValues,
+          }}
+        ></OrderedFoodItems>
       </Grid>
     </Grid>
   );

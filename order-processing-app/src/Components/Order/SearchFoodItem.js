@@ -45,10 +45,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchFoodItems() {
+export default function SearchFoodItems(props) {
+  const { values, setValues } = props;
   const [foodItems, setFoodItems] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [searchKey, setSearchKey] = useState("");
+  let orderedFoodItems = values.orderDetails;
   const classes = useStyles();
 
   useEffect(() => {
@@ -64,14 +66,28 @@ export default function SearchFoodItems() {
   useEffect(() => {
     let x = [...foodItems];
     x = x.filter((y) => {
-      return y.foodItemName
-        .toLowerCase()
-        .includes(searchKey.toLocaleLowerCase());
-      //  &&
-      // orderedFoodItems.every((item) => item.foodItemId != y.foodItemId)
+      return (
+        y.foodItemName.toLowerCase().includes(searchKey.toLocaleLowerCase()) &&
+        orderedFoodItems.every((item) => item.foodItemId != y.foodItemId)
+      );
     });
     setSearchList(x);
-  }, [searchKey]);
+  }, [searchKey, orderedFoodItems]);
+
+  const addFoodItem = (foodItem) => {
+    let x = {
+      orderMasterId: values.orderMasterId,
+      orderDetailId: 0,
+      foodItemId: foodItem.foodItemId,
+      quantity: 1,
+      foodItemPrice: foodItem.price,
+      foodItemName: foodItem.foodItemName,
+    };
+    setValues({
+      ...values,
+      orderDetails: [...values.orderDetails, x],
+    });
+  };
 
   return (
     <>
@@ -88,13 +104,13 @@ export default function SearchFoodItems() {
       </Paper>
       <List className={classes.listRoot}>
         {searchList.map((item, idx) => (
-          <ListItem key={idx}>
+          <ListItem key={idx} onClick={(e) => addFoodItem(item)}>
             <ListItemText
               primary={item.foodItemName}
               secondary={"$" + item.price}
             ></ListItemText>
             <ListItemSecondaryAction>
-              <IconButton>
+              <IconButton onClick={(e) => addFoodItem(item)}>
                 <PlusOneIcon></PlusOneIcon>
                 <ArrowForwardIosIcon></ArrowForwardIosIcon>
               </IconButton>
